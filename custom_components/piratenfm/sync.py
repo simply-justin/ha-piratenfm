@@ -32,7 +32,7 @@ from .music_assistant import (
     MusicAssistantLibrary,
     MusicAssistantUnavailable,
 )
-from .piratenfm import PiratenFmClient, PiratenFmError, Station
+from .piratenfm import COVER_URL, PiratenFmClient, PiratenFmError, Station
 from .storage import PENDING_ADD, PENDING_REMOVE, SyncState, SyncStore, TrackedStation
 
 type LibraryConnector = Callable[[], AbstractAsyncContextManager[MusicAssistantLibrary]]
@@ -267,7 +267,7 @@ class _Run:
             )
             if not in_library:
                 await self._add(station.station_id, entry, name)
-            elif entry.display_name != name and await self._upsert(station.station_id, entry, name):
+            elif _needs_update(entry, name) and await self._upsert(station.station_id, entry, name):
                 self.result.updated += 1
 
     async def _add(self, station_id: str, entry: TrackedStation, name: str) -> None:
@@ -285,12 +285,13 @@ class _Run:
 
     async def _upsert(self, station_id: str, entry: TrackedStation, name: str) -> bool:
         try:
-            radio = await self.library.async_upsert_radio(entry.stream_url, name)
+            radio = await self.library.async_upsert_radio(entry.stream_url, name, COVER_URL)
         except MusicAssistantCommandError as err:
             self._fail(station_id, "add/update", err)
             return False
         entry.music_assistant_library_id = radio.library_id
         entry.display_name = name
+        entry.cover_url = COVER_URL
         return True
 
     # Step 3 ---------------------------------------------------------------
@@ -328,6 +329,11 @@ class _Run:
         LOGGER.warning("Music Assistant %s of station %s failed: %s", operation, station_id, err)
         self.result.failed += 1
         self.result.failures.append(f"{station_id}: {operation} failed")
+
+
+def _needs_update(entry: TrackedStation, name: str) -> bool:
+    """Return True if the name we want, or the cover, differs from what we last wrote."""
+    return entry.display_name != name or entry.cover_url != COVER_URL
 
 
 def _mark_seen(entry: TrackedStation, station: Station, now: str) -> None:

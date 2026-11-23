@@ -9,5 +9,5 @@
   "issue_tracker": "https://github.com/simply-justin/ha-piratenfm/issues",
   "loggers": ["custom_components.piratenfm"],
   "requirements": ["music-assistant-client>=1.3.3"],
-  "version": "0.1.0"
+  "version": "0.2.0"
 }

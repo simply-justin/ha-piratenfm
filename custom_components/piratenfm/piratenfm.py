@@ -18,6 +18,8 @@ from .const import LOGGER
 BASE_URL = "https://piraten.fm"
 STATIONS_URL = f"{BASE_URL}/stations/"
 STREAM_URL_TEMPLATE = BASE_URL + "/stations/{station_id}/listen/mp3"
+# Piraten.FM has no per-station artwork; every station gets the app icon (512x512).
+COVER_URL = f"{BASE_URL}/icons/Icon-512.png"
 
 # Observed IDs are 6 upper-case alphanumerics (e.g. "F9O5Z8"); allow a little slack
 # but never anything that could alter the URL path.

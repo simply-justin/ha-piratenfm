@@ -9,7 +9,7 @@ from homeassistant.core import HomeAssistant
 import pytest
 
 from custom_components.piratenfm.music_assistant import MusicAssistantAuthError
-from custom_components.piratenfm.piratenfm import PiratenFmInvalidResponse
+from custom_components.piratenfm.piratenfm import COVER_URL, PiratenFmInvalidResponse
 from custom_components.piratenfm.storage import PENDING_ADD, PENDING_REMOVE, SyncStore
 from custom_components.piratenfm.sync import (
     StationSynchronizer,
@@ -358,3 +358,53 @@ async def test_remove_all_managed_only_removes_ours(hass, pfm, lib) -> None:
     result = await sync.async_remove_all_managed()
     assert result.removed == 1
     assert set(lib.radios) == {foreign, other}
+
+
+async def test_new_station_gets_cover(hass, pfm, lib) -> None:
+    await run(make(hass, pfm, lib))
+    assert lib.covers[url("AAA111")] == COVER_URL
+
+
+async def test_existing_station_without_cover_is_updated_once(hass, pfm, lib, hass_storage) -> None:
+    sync = make(hass, pfm, lib)
+    await run(sync)
+    # Simulate a station synced by a version without covers.
+    (await sync.async_get_state()).stations["AAA111"].cover_url = None
+    lib.covers.clear()
+    result = await run(sync)
+    assert result.updated == 1
+    assert lib.covers[url("AAA111")] == COVER_URL
+    assert (await run(sync)).updated == 0
+
+
+async def test_unmanaged_radio_gets_no_cover(hass, pfm, lib) -> None:
+    lib.add_foreign(url("AAA111"), "User's own entry")
+    await run(make(hass, pfm, lib))
+    assert url("AAA111") not in lib.covers
+
+
+async def test_loads_state_from_minor_version_1(hass, pfm, lib, hass_storage) -> None:
+    hass_storage["piratenfm.entry"] = {
+        "version": 1,
+        "minor_version": 1,
+        "key": "piratenfm.entry",
+        "data": {
+            "stations": {
+                "AAA111": {
+                    "stream_url": url("AAA111"),
+                    "music_assistant_library_id": None,
+                    "display_name": "Radio Dop 2 Dop • 97.00 MHz • Gelselaar",
+                    "managed_by_integration": True,
+                }
+            },
+            "last_successful_sync": None,
+        },
+    }
+    lib.radios["7"] = (url("AAA111"), "Radio Dop 2 Dop • 97.00 MHz • Gelselaar")
+    sync = make(hass, pfm, lib)
+    assert (await sync.async_get_state()).stations["AAA111"].cover_url is None
+    result = await run(sync)
+    assert result.updated == 1 and result.added == 0
+    assert lib.covers[url("AAA111")] == COVER_URL
+    await hass.async_block_till_done()
+    assert hass_storage["piratenfm.entry"]["minor_version"] == 2

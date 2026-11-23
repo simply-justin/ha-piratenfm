@@ -5,7 +5,7 @@ from __future__ import annotations
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from music_assistant_client.exceptions import CannotConnect, ConnectionClosed
-from music_assistant_models.enums import MediaType
+from music_assistant_models.enums import ImageType, MediaType
 from music_assistant_models.errors import AuthenticationFailed, InvalidDataError
 from music_assistant_models.media_items import ProviderMapping, Radio
 import pytest
@@ -74,6 +74,17 @@ async def test_upsert_sends_builtin_radio_and_parses_dict() -> None:
     item = sent[0]
     assert item.provider == "builtin" and item.item_id == stream_url("ABC123")
     assert kwargs == {"overwrite_existing": True}
+    assert not item.metadata.images
+
+
+async def test_upsert_sends_cover_as_remote_thumb() -> None:
+    lib, client = library()
+    client.music.add_item_to_library.return_value = {"item_id": 42, "name": "N"}
+    await lib.async_upsert_radio(stream_url("ABC123"), "N", "https://piraten.fm/icons/Icon-512.png")
+    [image] = client.music.add_item_to_library.call_args.args[0].metadata.images
+    assert image.type is ImageType.THUMB
+    assert image.path == "https://piraten.fm/icons/Icon-512.png"
+    assert image.provider == "builtin" and image.remotely_accessible
 
 
 async def test_upsert_unexpected_response() -> None:

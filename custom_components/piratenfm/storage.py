@@ -18,7 +18,7 @@ from homeassistant.util import dt as dt_util
 from .const import DOMAIN
 
 STORAGE_VERSION = 1
-STORAGE_MINOR_VERSION = 1
+STORAGE_MINOR_VERSION = 2
 
 PENDING_ADD = "add"
 PENDING_REMOVE = "remove"
@@ -35,6 +35,8 @@ class TrackedStation:
     location: str | None = None
     # Name we last wrote to MA; a user rename in MA is left alone until this changes.
     display_name: str | None = None
+    # Cover we last wrote to MA (None for stations synced before covers existed).
+    cover_url: str | None = None
     last_seen: str | None = None
     missing_count: int = 0
     managed_by_integration: bool = False
@@ -88,7 +90,8 @@ class _MigratingStore(Store[dict[str, Any]]):
     async def _async_migrate_func(
         self, old_major_version: int, old_minor_version: int, old_data: dict[str, Any]
     ) -> dict[str, Any]:
-        # Version 1 is the first schema; future migrations go here.
+        # 1.1 -> 1.2 added TrackedStation.cover_url; its default (None) makes the next
+        # sync add the cover, so no data rewrite is needed. Future migrations go here.
         return old_data
 
 

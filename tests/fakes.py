@@ -49,6 +49,7 @@ class FakeLibrary:
         self.fail_upsert: set[str] = set()  # urls
         self.fail_remove: set[str] = set()  # library ids
         self.upserts: list[tuple[str, str]] = []
+        self.covers: dict[str, str | None] = {}  # url -> cover last written
         self.removes: list[str] = []
         self.hook: Any = None  # awaited before each write, for interruption tests
 
@@ -75,12 +76,15 @@ class FakeLibrary:
                 out.setdefault(sid, []).append(LibraryRadio(lid, name, url))
         return out
 
-    async def async_upsert_radio(self, url: str, name: str) -> LibraryRadio:
+    async def async_upsert_radio(
+        self, url: str, name: str, cover_url: str | None = None
+    ) -> LibraryRadio:
         if self.hook:
             await self.hook("upsert", url)
         if url in self.fail_upsert:
             raise MusicAssistantCommandError("add failed")
         self.upserts.append((url, name))
+        self.covers[url] = cover_url
         if existing := self.by_url(url):
             lid = existing[0]
         else:

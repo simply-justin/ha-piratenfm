@@ -33,7 +33,7 @@ Every few minutes (default: 5) the integration:
 
 1. Fetches the list of stations that are currently broadcasting from `https://piraten.fm/stations/`.
 2. Adds new stations to Music Assistant as radio stations, named like
-   `Radio Dop 2 Dop • 97.00 MHz • Gelselaar`.
+   `Radio Dop 2 Dop • 97.00 MHz • Gelselaar`, with the Piraten.FM logo as cover.
 3. Renames stations when their frequency, location or name changes.
 4. Removes stations that have been off air for 3 successful syncs in a row.
 
@@ -150,8 +150,8 @@ is running is ignored.
 5. **Add** stations that are not in the library yet. First, a light check fetches at most 4 KB of
    the stream with an HTTP `Range` request, to make sure it really is audio. If the check fails,
    the station is added on the next sync. A failed check never counts as the station being offline.
-6. **Rename** stations whose name, frequency or location changed (see the limitation in
-   [section 12](#12-security-and-limitations)).
+6. **Update** stations whose name, frequency or location changed, or that don't have the cover
+   yet (see the limitation in [section 12](#12-security-and-limitations)).
 7. **Count absences** and remove stations that are past the threshold ([section 8](#8-how-offline-stations-are-removed)).
 8. **Save** the new state.
 
@@ -201,6 +201,7 @@ stores:
     "frequency": "94.30 MHz",
     "location": "Vriezenveen",
     "display_name": "Verzet Radio • 94.30 MHz • Vriezenveen",
+    "cover_url": "https://piraten.fm/icons/Icon-512.png",
     "last_seen": "2026-11-23T10:00:00+00:00",
     "missing_count": 0,
     "managed_by_integration": true,
@@ -275,8 +276,12 @@ redacted.
   `music/radios/update` command, but it needs admin (library-manage) rights. To work with a normal
   library-write token, the integration renames by re-adding the same stream with
   `overwrite_existing=True`. Music Assistant matches it to the existing radio (same library ID, no
-  duplicate), but replaces its stored fields. Custom artwork you set on a managed radio may be
-  replaced by Music Assistant's own metadata lookup.
+  duplicate), but replaces its stored fields, including the cover.
+- **One cover for every station.** Piraten.FM has no artwork per station, so every managed radio
+  gets the Piraten.FM app icon (`https://piraten.fm/icons/Icon-512.png`), loaded by Music Assistant
+  straight from Piraten.FM. Stations added by version 0.1.0 get the cover once, on the first sync
+  after updating. If you set your own artwork on a managed radio, it is replaced whenever the
+  station is updated.
 - **Listener count and now playing** are only shown in Home Assistant, in the **Active stations**
   attributes. Music Assistant has no fitting radio field for them, so they are not written there.
 - The shape of a non-empty `nowPlaying` has never been seen in the live API. Plain strings and

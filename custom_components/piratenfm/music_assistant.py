@@ -22,7 +22,7 @@ from typing import Any
 import aiohttp
 from music_assistant_client import MusicAssistantClient
 from music_assistant_client.exceptions import MusicAssistantClientException
-from music_assistant_models.enums import MediaType
+from music_assistant_models.enums import ImageType, MediaType
 from music_assistant_models.errors import (
     AuthenticationFailed,
     AuthenticationRequired,
@@ -30,7 +30,8 @@ from music_assistant_models.errors import (
     InvalidToken,
     MusicAssistantError,
 )
-from music_assistant_models.media_items import ProviderMapping, Radio
+from music_assistant_models.media_items import MediaItemImage, ProviderMapping, Radio
+from music_assistant_models.unique_list import UniqueList
 
 from .piratenfm import station_id_from_stream_url
 
@@ -96,8 +97,10 @@ class MusicAssistantLibrary:
                 return found
             offset += PAGE_SIZE
 
-    async def async_upsert_radio(self, stream_url: str, name: str) -> LibraryRadio:
-        """Add the stream as a radio, or update the name of the existing one.
+    async def async_upsert_radio(
+        self, stream_url: str, name: str, cover_url: str | None = None
+    ) -> LibraryRadio:
+        """Add the stream as a radio, or update the name and cover of the existing one.
 
         MA matches the item on its provider mapping, so this never creates a
         duplicate for the same stream URL.
@@ -114,6 +117,18 @@ class MusicAssistantLibrary:
                 )
             },
         )
+        if cover_url:
+            # The builtin provider stores a remote THUMB with the radio itself.
+            radio.metadata.images = UniqueList(
+                [
+                    MediaItemImage(
+                        type=ImageType.THUMB,
+                        path=cover_url,
+                        provider=BUILTIN_PROVIDER,
+                        remotely_accessible=True,
+                    )
+                ]
+            )
         result: Any = await self._call(
             self._client.music.add_item_to_library(radio, overwrite_existing=True)
         )
