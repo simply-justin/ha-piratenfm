@@ -1,7 +1,10 @@
 # Contributing
 
-Thanks for helping out! This guide covers how the code is organised, how to run it locally and
-what a good pull request looks like.
+Thank you for considering a contribution. This guide explains how the code is organised, how to
+run it locally and what makes a good pull request.
+
+For questions or ideas, open an [issue](https://github.com/simply-justin/ha-piratenfm/issues/new/choose)
+before you start on a larger change, so we can agree on the approach first.
 
 ## Ground rules
 
@@ -10,13 +13,13 @@ what a good pull request looks like.
   are left alone. See `tests/test_sync.py` for examples.
 - **No invented APIs.** If you use a new Music Assistant command, link to the line in the
   [server source](https://github.com/music-assistant/server) that defines it in your PR.
-- **Keep it small.** Prefer a few clear lines over a new abstraction. No new runtime dependencies
-  unless they are clearly needed.
-- Be kind in issues and reviews.
+- **Keep it small.** Prefer a few clear lines over a new abstraction. Add no new runtime
+  dependencies unless they are clearly needed.
+- **Be respectful** in issues and reviews.
 
 ## Project layout
 
-```
+```text
 custom_components/piratenfm/
 ├── __init__.py          Setup/unload, wiring, the remove_managed_stations service
 ├── const.py             Domain, option keys and defaults
@@ -42,7 +45,7 @@ tests/
 
 ### How the pieces fit together
 
-```
+```text
 Coordinator (timer / button)
         │
         ▼
@@ -139,23 +142,24 @@ If you add, rename or remove fields in `TrackedStation` or `SyncState`:
 
 - Use [Conventional Commits](https://www.conventionalcommits.org/): `feat: …`, `fix: …`, `docs: …`,
   `test: …`, `refactor: …`, `chore: …`.
-- One topic per PR. Describe **what** changed and **why**, and how you tested it.
+- One topic per pull request. The [template](.github/pull_request_template.md) asks what changed,
+  why, and how you tested it.
+- Add a line under **Unreleased** in [CHANGELOG.md](CHANGELOG.md) for user-facing changes.
 - All CI checks must pass.
 
 ## Releasing (maintainers)
 
 1. Update `version` in `custom_components/piratenfm/manifest.json` and in `pyproject.toml`.
-2. Commit as `chore: release vX.Y.Z`, tag `vX.Y.Z` and push the tag.
-3. Create a GitHub release from the tag. HACS picks up new releases automatically.
+2. In `CHANGELOG.md`, rename **Unreleased** to the new version and date, and update the links at
+   the bottom.
+3. Commit as `chore: release vX.Y.Z`, tag `vX.Y.Z` and push the tag.
+4. Create a GitHub release from the tag, with the changelog section as release notes. HACS offers
+   new releases to users automatically.
 
 ## Reporting bugs
 
-Open an issue and include:
+Use the [bug report form](https://github.com/simply-justin/ha-piratenfm/issues/new/choose). It asks
+for the versions, the **Last sync status** attributes, diagnostics and debug logs, which are
+usually enough to find the cause.
 
-- Home Assistant, Music Assistant and integration versions.
-- The **Last sync status** state and its attributes.
-- Diagnostics (**⋮ → Download diagnostics**; connection details are already redacted).
-- Debug logs around the problem.
-
-Report security problems privately through GitHub's **Report a vulnerability** button, not in a
-public issue.
+Report security problems privately, as described in [SECURITY.md](SECURITY.md).

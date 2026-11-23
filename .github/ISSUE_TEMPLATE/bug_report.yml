@@ -1,0 +1,62 @@
+name: Bug report
+description: Something does not work as described in the README.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please check the
+        [troubleshooting table](https://github.com/simply-justin/ha-piratenfm#troubleshooting) first.
+        Never paste your access token: the diagnostics file already hides it.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+  - type: input
+    id: integration-version
+    attributes:
+      label: Integration version
+      placeholder: "0.2.0"
+    validations:
+      required: true
+  - type: input
+    id: ha-version
+    attributes:
+      label: Home Assistant version
+      placeholder: "2026.11.0"
+    validations:
+      required: true
+  - type: input
+    id: ma-version
+    attributes:
+      label: Music Assistant server version
+      placeholder: "2.7.0"
+    validations:
+      required: true
+  - type: textarea
+    id: sync-status
+    attributes:
+      label: Last sync status
+      description: The state and attributes of the **Last sync status** sensor (Developer tools → States).
+      render: yaml
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics
+      description: Open the integration and choose **⋮ → Download diagnostics**. Drag the file here.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Debug logs
+      description: Enable debug logging on the integration page and paste the relevant lines.
+      render: text
