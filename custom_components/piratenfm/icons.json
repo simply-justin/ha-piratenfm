@@ -1,0 +1,19 @@
+{
+  "entity": {
+    "button": { "sync_now": { "default": "mdi:sync" } },
+    "sensor": {
+      "active_stations": { "default": "mdi:radio-tower" },
+      "managed_stations": { "default": "mdi:playlist-music" },
+      "last_successful_sync": { "default": "mdi:clock-check-outline" },
+      "last_sync_status": { "default": "mdi:list-status" },
+      "last_sync_duration": { "default": "mdi:timer-outline" }
+    },
+    "switch": {
+      "auto_sync": { "default": "mdi:sync", "state": { "off": "mdi:sync-off" } },
+      "auto_remove": { "default": "mdi:delete-clock", "state": { "off": "mdi:delete-off" } }
+    }
+  },
+  "services": {
+    "remove_managed_stations": { "service": "mdi:playlist-remove" }
+  }
+}

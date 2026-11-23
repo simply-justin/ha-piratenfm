@@ -1,0 +1,7 @@
+remove_managed_stations:
+  fields:
+    config_entry_id:
+      required: true
+      selector:
+        config_entry:
+          integration: piratenfm

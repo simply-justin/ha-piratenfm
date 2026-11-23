@@ -1,0 +1,104 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Verbinden met Music Assistant",
+        "description": "Piraten.FM-zenders worden gesynchroniseerd naar de radiobibliotheek van deze Music Assistant-server. Music Assistant-servers met authenticatie (API-schema 28 en nieuwer) vereisen een langdurig token (Music Assistant → Instellingen → Profiel → Langdurige toegangstokens).",
+        "data": {
+          "url": "Music Assistant-URL",
+          "token": "Toegangstoken"
+        },
+        "data_description": {
+          "url": "Bijvoorbeeld http://homeassistant.local:8095. Wordt vooraf ingevuld vanuit de officiële Music Assistant-integratie indien aanwezig.",
+          "token": "Laat alleen leeg voor Music Assistant-servers zonder authenticatie."
+        }
+      },
+      "reconfigure": {
+        "title": "Music Assistant-verbinding wijzigen",
+        "data": {
+          "url": "Music Assistant-URL",
+          "token": "Toegangstoken"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Music Assistant-token geweigerd",
+        "description": "Voer een nieuw langdurig Music Assistant-toegangstoken in.",
+        "data": {
+          "token": "Toegangstoken"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Kan geen verbinding maken met Music Assistant.",
+      "invalid_auth": "Music Assistant heeft het token geweigerd of het heeft geen bibliotheekrechten.",
+      "invalid_url": "Voer een http(s)- of ws(s)-URL in."
+    },
+    "abort": {
+      "already_configured": "Deze Music Assistant-server is al geconfigureerd.",
+      "reauth_successful": "Opnieuw authenticeren is gelukt.",
+      "reconfigure_successful": "Herconfiguratie is gelukt.",
+      "wrong_server": "Deze URL verwijst naar een andere Music Assistant-server."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Synchronisatie-opties",
+        "data": {
+          "auto_sync": "Automatisch synchroniseren",
+          "scan_interval": "Synchronisatie-interval (seconden)",
+          "auto_remove": "Offline zenders automatisch verwijderen",
+          "missing_threshold": "Gemiste synchronisaties vóór verwijderen",
+          "include_frequency": "Frequentie in zendernaam tonen",
+          "include_location": "Locatie in zendernaam tonen"
+        },
+        "data_description": {
+          "missing_threshold": "Aantal opeenvolgende geslaagde synchronisaties waarin een zender ontbreekt voordat hij wordt verwijderd.",
+          "include_frequency": "Zendernamen zien er zo uit: Naam • 97.00 MHz • Locatie."
+        }
+      }
+    }
+  },
+  "entity": {
+    "button": {
+      "sync_now": { "name": "Nu synchroniseren" }
+    },
+    "sensor": {
+      "active_stations": { "name": "Actieve zenders", "unit_of_measurement": "zenders" },
+      "managed_stations": { "name": "Beheerde zenders", "unit_of_measurement": "zenders" },
+      "last_successful_sync": { "name": "Laatste geslaagde synchronisatie" },
+      "last_sync_status": {
+        "name": "Status laatste synchronisatie",
+        "state": {
+          "success": "Geslaagd",
+          "partial": "Gedeeltelijk mislukt",
+          "empty_response": "Leeg antwoord (overgeslagen)",
+          "piratenfm_unavailable": "Piraten.FM niet bereikbaar",
+          "music_assistant_unavailable": "Music Assistant niet bereikbaar",
+          "auth_failed": "Authenticatie mislukt"
+        }
+      },
+      "last_sync_duration": { "name": "Duur laatste synchronisatie" }
+    },
+    "switch": {
+      "auto_sync": { "name": "Automatisch synchroniseren" },
+      "auto_remove": { "name": "Offline zenders automatisch verwijderen" }
+    }
+  },
+  "exceptions": {
+    "auth_failed": { "message": "Music Assistant heeft het toegangstoken geweigerd." },
+    "entry_not_loaded": { "message": "De gekozen Piraten.FM-integratie is niet geladen." }
+  },
+  "services": {
+    "remove_managed_stations": {
+      "name": "Beheerde zenders verwijderen",
+      "description": "Verwijdert alle radiozenders die deze integratie heeft toegevoegd uit de Music Assistant-bibliotheek. Zenders die door anderen zijn toegevoegd worden nooit aangeraakt. Gebruik dit vóór het verwijderen van de integratie.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Piraten.FM-integratie",
+          "description": "De Piraten.FM-integratie die moet worden opgeschoond."
+        }
+      }
+    }
+  }
+}

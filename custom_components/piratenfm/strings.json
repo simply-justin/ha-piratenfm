@@ -1,0 +1,104 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Music Assistant",
+        "description": "Piraten.FM stations are synchronized into the radio library of this Music Assistant server. Music Assistant servers with authentication enabled (API schema 28 and newer) require a long-lived token (Music Assistant → Settings → Profile → Long-lived access tokens).",
+        "data": {
+          "url": "Music Assistant URL",
+          "token": "Access token"
+        },
+        "data_description": {
+          "url": "For example http://homeassistant.local:8095. Prefilled from the official Music Assistant integration when present.",
+          "token": "Leave empty only for Music Assistant servers that do not require authentication."
+        }
+      },
+      "reconfigure": {
+        "title": "Change Music Assistant connection",
+        "data": {
+          "url": "Music Assistant URL",
+          "token": "Access token"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Music Assistant token rejected",
+        "description": "Enter a new long-lived Music Assistant access token.",
+        "data": {
+          "token": "Access token"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to Music Assistant.",
+      "invalid_auth": "Music Assistant rejected the token or it lacks library permissions.",
+      "invalid_url": "Enter an http(s) or ws(s) URL."
+    },
+    "abort": {
+      "already_configured": "This Music Assistant server is already configured.",
+      "reauth_successful": "Reauthentication was successful.",
+      "reconfigure_successful": "Reconfiguration was successful.",
+      "wrong_server": "This URL points to a different Music Assistant server."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Synchronization options",
+        "data": {
+          "auto_sync": "Automatic synchronization",
+          "scan_interval": "Sync interval (seconds)",
+          "auto_remove": "Automatically remove offline stations",
+          "missing_threshold": "Missed syncs before removal",
+          "include_frequency": "Show frequency in station name",
+          "include_location": "Show location in station name"
+        },
+        "data_description": {
+          "missing_threshold": "Number of consecutive successful syncs a station must be absent before it is removed.",
+          "include_frequency": "Station names look like: Name • 97.00 MHz • Location."
+        }
+      }
+    }
+  },
+  "entity": {
+    "button": {
+      "sync_now": { "name": "Synchronize now" }
+    },
+    "sensor": {
+      "active_stations": { "name": "Active stations", "unit_of_measurement": "stations" },
+      "managed_stations": { "name": "Managed stations", "unit_of_measurement": "stations" },
+      "last_successful_sync": { "name": "Last successful sync" },
+      "last_sync_status": {
+        "name": "Last sync status",
+        "state": {
+          "success": "Success",
+          "partial": "Partially failed",
+          "empty_response": "Empty response (skipped)",
+          "piratenfm_unavailable": "Piraten.FM unavailable",
+          "music_assistant_unavailable": "Music Assistant unavailable",
+          "auth_failed": "Authentication failed"
+        }
+      },
+      "last_sync_duration": { "name": "Last sync duration" }
+    },
+    "switch": {
+      "auto_sync": { "name": "Automatic synchronization" },
+      "auto_remove": { "name": "Automatic removal of offline stations" }
+    }
+  },
+  "exceptions": {
+    "auth_failed": { "message": "Music Assistant rejected the access token." },
+    "entry_not_loaded": { "message": "The selected Piraten.FM entry is not loaded." }
+  },
+  "services": {
+    "remove_managed_stations": {
+      "name": "Remove managed stations",
+      "description": "Removes every radio this integration added from the Music Assistant library. Radios added by anyone else are never touched. Use this before uninstalling.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Piraten.FM entry",
+          "description": "The Piraten.FM integration entry to clean up."
+        }
+      }
+    }
+  }
+}
