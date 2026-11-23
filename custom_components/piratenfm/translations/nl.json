@@ -9,7 +9,7 @@
           "token": "Toegangstoken"
         },
         "data_description": {
-          "url": "Bijvoorbeeld http://homeassistant.local:8095. Wordt vooraf ingevuld vanuit de officiële Music Assistant-integratie indien aanwezig.",
+          "url": "Het adres van de Music Assistant-webinterface (standaard poort 8095). Wordt vooraf ingevuld vanuit de officiële Music Assistant-integratie indien aanwezig.",
           "token": "Laat alleen leeg voor Music Assistant-servers zonder authenticatie."
         }
       },
